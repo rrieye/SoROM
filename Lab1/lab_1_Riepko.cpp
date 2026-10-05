@@ -147,6 +147,63 @@ BigInt BigInt::operator*(const BigInt& other) const
     return result;
 }
 
+BigInt BigInt::operator/(const BigInt& other) const
+{
+    if (other == BigInt(0))
+    {
+        throw std::invalid_argument("Error: division by zero");
+    }
+
+    BigInt q;
+    BigInt r = *this;
+    int k = other.bitLength();
+
+    while (r >= other)
+    {
+        int t = r.bitLength();
+        BigInt c = other.shiftBitsHigh(t - k);
+
+        if (r < c)
+        {
+            t = t - 1;
+            c = other.shiftBitsHigh(t - k);
+        }
+
+        r = r - c;
+        BigInt powerOfTwo(1);
+        q = q + powerOfTwo.shiftBitsHigh(t - k);
+    }
+
+    return q;
+}
+
+BigInt BigInt::operator%(const BigInt& other) const
+{
+    if (other == BigInt(0))
+    {
+        throw std::invalid_argument("Error: division by zero");
+    }
+
+    BigInt r = *this;
+    int k = other.bitLength();
+
+    while (r >= other)
+    {
+        int t = r.bitLength();
+        BigInt c = other.shiftBitsHigh(t - k);
+
+        if (r < c)
+        {
+            t = t - 1;
+            c = other.shiftBitsHigh(t - k);
+        }
+
+        r = r - c;
+    }
+
+    return r;
+}
+
 bool BigInt::operator<(const BigInt& other) const
 {
     int i = WORDS - 1;
@@ -315,6 +372,17 @@ int main()
     BigInt mul3("FFFFFFFF");
     BigInt mul4("FFFFFFFF");
     cout << "FFFFFFFF * FFFFFFFF = " << (mul3 * mul4) << " (expected fffffffe00000001)\n";
+
+    BigInt div1("100000000"); 
+    BigInt div2("3");
+    
+    cout << "\n100000000 / 3 = " << (div1 / div2) << " (expected 55555555)\n";
+    cout << "100000000 % 3 = " << (div1 % div2) << " (expected 1)\n";
+    
+    BigInt div3("AABBCCDD11223344");
+    BigInt div4("1111111111111111");
+    cout << "A / B = " << (div3 / div4) << " (expected a)\n";
+    cout << "A % B = " << (div3 % div4) << " (expected 1122326677889a)\n";
 
     return 0;
 }
