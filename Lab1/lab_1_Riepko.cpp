@@ -11,7 +11,7 @@ using namespace std;
 
 class BigInt
 {
-    public:
+public:
     static constexpr size_t WORDS = 32;
 
     std::array<uint32_t, WORDS> words{};
@@ -46,70 +46,232 @@ class BigInt
     friend std::ostream& operator<<(std::ostream& os, const BigInt& number);
 };
 
-BigInt::BigInt(uint32_t value) 
+BigInt::BigInt(uint32_t value)
 {
     words[0] = value;
 }
 
-BigInt::BigInt(const std::string& hexStr) 
+BigInt::BigInt(const std::string& hexStr)
 {
     int len = hexStr.length();
     int wordIndex = 0;
-    
-    for (int i = len; i > 0; i -= 8) 
+
+    for (int i = len; i > 0; i -= 8)
     {
-        if (wordIndex >= WORDS) break; 
-        
+        if (wordIndex >= WORDS) break;
+
         int start = std::max(0, i - 8);
         int count = i - start;
         std::string chunk = hexStr.substr(start, count);
-        
+
         words[wordIndex] = std::stoul(chunk, nullptr, 16);
         wordIndex++;
     }
 }
 
-std::string BigInt::toHex() const 
+BigInt BigInt::operator+(const BigInt& other) const
+{
+    BigInt result;
+    uint32_t carry = 0;
+
+    for (size_t i = 0; i < WORDS; ++i)
+    {
+        uint64_t temp = static_cast<uint64_t>(this->words[i]) + other.words[i] + carry;
+        result.words[i] = static_cast<uint32_t>(temp & 0xFFFFFFFF);
+        carry = static_cast<uint32_t>(temp >> 32);
+    }
+    return result;
+}
+
+BigInt BigInt::operator-(const BigInt& other) const
+{
+    BigInt result;
+    uint32_t borrow = 0;
+
+    for (size_t i = 0; i < WORDS; ++i)
+    {
+        int64_t temp = static_cast<int64_t>(this->words[i]) - other.words[i] - borrow;
+
+        if (temp >= 0)
+        {
+            result.words[i] = static_cast<uint32_t>(temp);
+            borrow = 0;
+        }
+        else
+        {
+            result.words[i] = static_cast<uint32_t>((1ULL << 32) + temp);
+            borrow = 1;
+        }
+    }
+
+    if (borrow == 1)
+    {
+        throw std::invalid_argument("Error: subtraction result is negative");
+    }
+
+    return result;
+}
+
+bool BigInt::operator<(const BigInt& other) const
+{
+    int i = WORDS - 1;
+    while (i >= 0 && this->words[i] == other.words[i])
+    {
+        i--;
+    }
+    if (i == -1) return false;
+    return this->words[i] < other.words[i];
+}
+
+bool BigInt::operator>(const BigInt& other) const
+{
+    int i = WORDS - 1;
+    while (i >= 0 && this->words[i] == other.words[i])
+    {
+        i--;
+    }
+    if (i == -1) return false;
+    return this->words[i] > other.words[i];
+}
+
+bool BigInt::operator<=(const BigInt& other) const
+{
+    return *this < other || *this == other;
+}
+
+bool BigInt::operator>=(const BigInt& other) const
+{
+    return *this > other || *this == other;
+}
+
+bool BigInt::operator==(const BigInt& other) const
+{
+    int i = WORDS - 1;
+    while (i >= 0 && this->words[i] == other.words[i])
+    {
+        i--;
+    }
+    return i == -1;
+}
+
+bool BigInt::operator!=(const BigInt& other) const
+{
+    return !(*this == other);
+}
+
+int BigInt::bitLength() const
+{
+    for (int i = WORDS - 1; i >= 0; --i)
+    {
+        if (words[i] != 0)
+        {
+            int length = i * 32;
+            uint32_t temp = words[i];
+            while (temp > 0)
+            {
+                length++;
+                temp >>= 1;
+            }
+            return length;
+        }
+    }
+    return 0;
+}
+
+BigInt BigInt::shiftBitsHigh(int shift) const
+{
+    BigInt result;
+    int wordShift = shift / 32;
+    int bitShift = shift % 32;
+
+    if (wordShift >= WORDS) return result;
+
+    uint32_t carry = 0;
+    for (size_t i = 0; i < WORDS - wordShift; ++i)
+    {
+        uint32_t current = this->words[i];
+        result.words[i + wordShift] = (bitShift == 0 ? current : (current << bitShift)) | carry;
+        carry = (bitShift == 0 ? 0 : (current >> (32 - bitShift)));
+    }
+    return result;
+}
+
+BigInt BigInt::shiftBitsLow(int shift) const
+{
+    BigInt result;
+    int wordShift = shift / 32;
+    int bitShift = shift % 32;
+
+    if (wordShift >= WORDS) return result;
+
+    uint32_t carry = 0;
+    for (int i = WORDS - 1; i >= wordShift; --i)
+    {
+        uint32_t current = this->words[i];
+        result.words[i - wordShift] = (bitShift == 0 ? current : (current >> bitShift)) | carry;
+        carry = (bitShift == 0 ? 0 : (current << (32 - bitShift)));
+    }
+    return result;
+}
+
+std::string BigInt::toHex() const
 {
     std::stringstream ss;
-    ss << std::hex << std::setfill('0'); 
+    ss << std::hex << std::setfill('0');
     bool leadingZeros = true;
 
-    for (int i = WORDS - 1; i >= 0; --i) 
+    for (int i = WORDS - 1; i >= 0; --i)
     {
-        if (words[i] != 0 || !leadingZeros) 
+        if (words[i] != 0 || !leadingZeros)
         {
-            if (leadingZeros) 
+            if (leadingZeros)
             {
-                ss << words[i]; 
+                ss << words[i];
                 leadingZeros = false;
-            } 
-            else 
+            }
+            else
             {
                 ss << std::setw(8) << words[i];
             }
         }
     }
 
-    if (leadingZeros) return "0"; 
-    
+    if (leadingZeros) return "0";
+
     return ss.str();
 }
 
-std::ostream& operator<<(std::ostream& os, const BigInt& number) 
+std::ostream& operator<<(std::ostream& os, const BigInt& number)
 {
     os << number.toHex();
     return os;
 }
 
-int main() {
-    BigInt zero;
-    BigInt small(1024);
-    BigInt hexNum("1a2b3c4d5e6f7a8b9c0d1e2f3");
+int main()
+{
+    BigInt a("AABBCCDD11223344");
+    BigInt b("1111111111111111");
+    BigInt c("100");
+    BigInt d("200");
+    BigInt testNum("F");
 
-    std::cout << "Zero: " << zero << "\n";
-    std::cout << "Small: " << small << "\n";
-    std::cout << "HexNum: " << hexNum << "\n";
+    cout << "A = " << a << "\n";
+    cout << "B = " << b << "\n";
+    cout << "A + B = " << (a + b) << "\n";
+    cout << "A - B = " << (a - b) << "\n\n";
+
+    cout << "c < d:  " << (c < d) << " (expected 1)\n";
+    cout << "d == d: " << (d == d) << " (expected 1)\n";
+    cout << "c >= d: " << (c >= d) << " (expected 0)\n\n";
+
+    cout << "testNum = " << testNum << "\n";
+    cout << "bitLength: " << testNum.bitLength() << " (expected 4)\n";
+
+    BigInt shiftedHigh = testNum.shiftBitsHigh(4);
+    cout << "testNum << 4: " << shiftedHigh << " (expected f0)\n";
+
+    BigInt shiftedLow = shiftedHigh.shiftBitsLow(4);
+    cout << "shiftedHigh >> 4: " << shiftedLow << " (expected f)\n";
 
     return 0;
 }
