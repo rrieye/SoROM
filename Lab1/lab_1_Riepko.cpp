@@ -204,6 +204,27 @@ BigInt BigInt::operator%(const BigInt& other) const
     return r;
 }
 
+BigInt BigInt::power(const BigInt& exp) const
+{
+    BigInt result(1);
+    int bits = exp.bitLength();
+    
+    for (int i = bits - 1; i >= 0; --i)
+    {
+        uint32_t bit = (exp.words[i / 32] >> (i % 32)) & 1;
+        
+        if (bit == 1)
+        {
+            result = result * (*this);
+        }
+        if (i > 0)
+        {
+            result = result * result;
+        }
+    }
+    return result;
+}
+
 bool BigInt::operator<(const BigInt& other) const
 {
     int i = WORDS - 1;
@@ -383,6 +404,11 @@ int main()
     BigInt div4("1111111111111111");
     cout << "A / B = " << (div3 / div4) << " (expected a)\n";
     cout << "A % B = " << (div3 % div4) << " (expected 1122326677889a)\n";
+
+    BigInt base("5");
+    BigInt exponent("13");
+    
+    cout << "\n5 ^ 13 = " << base.power(exponent) << " (expected 1158e460913d)\n";
 
     return 0;
 }
