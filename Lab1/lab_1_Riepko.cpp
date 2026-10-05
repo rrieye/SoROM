@@ -112,6 +112,41 @@ BigInt BigInt::operator-(const BigInt& other) const
     return result;
 }
 
+BigInt BigInt::operator*(uint32_t other) const
+{
+    BigInt result;
+    uint32_t carry = 0;
+    
+    for (size_t i = 0; i < WORDS; ++i)
+    {
+        uint64_t temp = static_cast<uint64_t>(this->words[i]) * other + carry;
+        result.words[i] = static_cast<uint32_t>(temp & 0xFFFFFFFF);
+        carry = static_cast<uint32_t>(temp >> 32);
+    }
+    return result;
+}
+
+BigInt BigInt::operator*(const BigInt& other) const
+{
+    BigInt result;
+    
+    for (size_t i = 0; i < WORDS; ++i)
+    {
+        if (this->words[i] == 0) continue;
+
+        uint32_t carry = 0; 
+        for (size_t j = 0; j < WORDS - i; ++j)
+        {
+            uint64_t temp = static_cast<uint64_t>(result.words[i + j]) + 
+                            static_cast<uint64_t>(this->words[i]) * other.words[j] + carry;
+                            
+            result.words[i + j] = static_cast<uint32_t>(temp & 0xFFFFFFFF);
+            carry = static_cast<uint32_t>(temp >> 32);
+        }
+    }
+    return result;
+}
+
 bool BigInt::operator<(const BigInt& other) const
 {
     int i = WORDS - 1;
@@ -272,6 +307,14 @@ int main()
 
     BigInt shiftedLow = shiftedHigh.shiftBitsLow(4);
     cout << "shiftedHigh >> 4: " << shiftedLow << " (expected f)\n";
+
+    BigInt mul1("100000000");
+    BigInt mul2("200000000");
+    cout << "\n100000000 * 200000000 = " << (mul1 * mul2) << " (expected 20000000000000000)\n";
+    
+    BigInt mul3("FFFFFFFF");
+    BigInt mul4("FFFFFFFF");
+    cout << "FFFFFFFF * FFFFFFFF = " << (mul3 * mul4) << " (expected fffffffe00000001)\n";
 
     return 0;
 }
