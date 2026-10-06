@@ -58,5 +58,11 @@ int main()
     
     cout << "\n5 ^ 13 = " << base.power(exponent) << " (expected 1158e460913d)\n";
 
+    BigInt formatTest("FF"); 
+    cout << "\n--- Formatting Tests ---\n";
+    cout << "Hex: " << formatTest.toHex() << "\n";
+    cout << "Binary: " << formatTest.toBinary() << " (expected 11111111)\n";
+    cout << "Decimal: " << formatTest.toDecimal() << " (expected 255)\n";
+
     return 0;
 }

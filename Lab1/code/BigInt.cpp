@@ -86,6 +86,11 @@ BigInt BigInt::operator*(uint32_t other) const
     return result;
 }
 
+BigInt BigInt::square() const
+{
+    return (*this) * (*this);
+}
+
 BigInt BigInt::operator*(const BigInt& other) const
 {
     BigInt result;
@@ -179,7 +184,7 @@ BigInt BigInt::power(const BigInt& exp) const
         }
         if (i > 0)
         {
-            result = result * result;
+            result = result.square();
         }
     }
     return result;
@@ -318,4 +323,37 @@ std::ostream& operator<<(std::ostream& os, const BigInt& number)
 {
     os << number.toHex();
     return os;
+}
+
+std::string BigInt::toBinary() const
+{
+    int len = bitLength();
+    if (len == 0) return "0";
+
+    std::string result = "";
+    for (int i = len - 1; i >= 0; --i)
+    {
+        uint32_t bit = (words[i / 32] >> (i % 32)) & 1;
+        result += (bit == 1 ? '1' : '0');
+    }
+    return result;
+}
+
+std::string BigInt::toDecimal() const
+{
+    if (*this == BigInt(0)) return "0";
+
+    BigInt temp = *this;
+    BigInt ten("A"); 
+    std::string result = "";
+
+    while (temp > BigInt(0))
+    {
+        BigInt rem = temp % ten;
+        result += std::to_string(rem.words[0]);
+        temp = temp / ten;
+    }
+    
+    std::reverse(result.begin(), result.end());
+    return result;
 }

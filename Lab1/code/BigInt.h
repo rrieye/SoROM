@@ -21,6 +21,8 @@ public:
 
     BigInt operator*(const BigInt& other) const;
     BigInt operator*(uint32_t other) const;
+    
+    BigInt square() const;
 
     BigInt operator/(const BigInt& other) const;
     BigInt operator%(const BigInt& other) const;
@@ -39,5 +41,7 @@ public:
     BigInt shiftBitsLow(int shift) const;
 
     std::string toHex() const;
+    std::string toBinary() const;
+    std::string toDecimal() const;
     friend std::ostream& operator<<(std::ostream& os, const BigInt& number);
 };

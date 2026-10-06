@@ -44,5 +44,10 @@ void runTests()
     cout << "Test 6 [a^3 == a*a*a]: ";
     if (powerResult == manualPower) cout << "Passed!\n"; else cout << "Failed!\n";
 
+    BigInt squareResult = a.square();
+    BigInt manualSquare = a * a;
+    cout << "Test 7 [a^2 == a*a]: ";
+    if (squareResult == manualSquare) cout << "Passed!\n"; else cout << "Failed!\n";
+
     cout << "------------------------------\n\n";
 }

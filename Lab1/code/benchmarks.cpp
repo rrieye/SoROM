@@ -42,6 +42,15 @@ void runBenchmarks()
     }
     end = std::chrono::steady_clock::now();
     long long timeMul = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / ITERATIONS;
+
+    start = std::chrono::steady_clock::now();
+    for (int i = 0; i < ITERATIONS; ++i)
+    {
+        BigInt res = a.square();
+        dummy = res.words[0];
+    }
+    end = std::chrono::steady_clock::now();
+    long long timeSquare = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start).count() / ITERATIONS;
     
     start = std::chrono::steady_clock::now();
     for (int i = 0; i < ITERATIONS; ++i)
@@ -75,6 +84,7 @@ void runBenchmarks()
     cout << "Addition  | " << timeAdd << "\n";
     cout << "Subtract  | " << timeSub << "\n";
     cout << "Multiply  | " << timeMul << "\n";
+    cout << "Square    | " << timeSquare << "\n";
     cout << "Division  | " << timeDiv << "\n";
     cout << "Modulo    | " << timeMod << "\n";
     cout << "Power     | " << timePow << "\n";
