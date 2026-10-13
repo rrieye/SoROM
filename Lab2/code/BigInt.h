@@ -48,4 +48,7 @@ public:
     // до 2 лаби
     BigInt gcd(const BigInt& other) const;
     BigInt lcm(const BigInt& other) const;
+
+    BigInt addMod(const BigInt& other, const BigInt& n) const;
+    BigInt subMod(const BigInt& other, const BigInt& n) const;
 };

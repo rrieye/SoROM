@@ -5,16 +5,18 @@ using namespace std;
 
 int main()
 {
-    cout << "--- Lab 2: Modular Arithmetic ---" << "\n";
+    BigInt a("15");
+    BigInt b("20");
+    BigInt n("30");
     
-    BigInt a("1A2B3C4D5E6F");
-    BigInt b("F6E5D4C3B2A1");
+    BigInt resAdd = a.addMod(b, n);
+    cout << "15 + 20 mod 30 = " << resAdd.toDecimal() << "\n";
     
-    cout << "a = " << a.toHex() << "\n";
-    cout << "b = " << b.toHex() << "\n";
+    BigInt resSub1 = b.subMod(a, n);
+    cout << "20 - 15 mod 30 = " << resSub1.toDecimal() << "\n";
     
-    BigInt gcd_res = a.gcd(b);
-    cout << "GCD(a, b) = " << gcd_res.toHex() << "\n";
+    BigInt resSub2 = a.subMod(b, n);
+    cout << "15 - 20 mod 30 = " << resSub2.toDecimal() << "\n";
     
     return 0;
 }

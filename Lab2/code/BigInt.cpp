@@ -417,3 +417,23 @@ BigInt BigInt::lcm(const BigInt& other) const
     }
     return (*this * other) / this->gcd(other);
 }
+
+BigInt BigInt::addMod(const BigInt& other, const BigInt& n) const
+{
+    BigInt result = *this + other;
+    if (result >= n)
+    {
+        result = result - n;
+    }
+    return result;
+}
+
+BigInt BigInt::subMod(const BigInt& other, const BigInt& n) const
+{
+    if (*this >= other)
+    {
+        return *this - other;
+    }
+    BigInt temp = n - other;
+    return *this + temp;
+}
