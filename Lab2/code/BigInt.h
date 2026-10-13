@@ -51,4 +51,9 @@ public:
 
     BigInt addMod(const BigInt& other, const BigInt& n) const;
     BigInt subMod(const BigInt& other, const BigInt& n) const;
+
+    BigInt getBarrettMu() const;
+    BigInt barrettReduction(const BigInt& n, const BigInt& mu) const;
+    BigInt mulMod(const BigInt& other, const BigInt& n, const BigInt& mu) const;
+    BigInt squareMod(const BigInt& n, const BigInt& mu) const;
 };

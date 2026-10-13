@@ -437,3 +437,43 @@ BigInt BigInt::subMod(const BigInt& other, const BigInt& n) const
     BigInt temp = n - other;
     return *this + temp;
 }
+
+BigInt BigInt::getBarrettMu() const
+{
+    int k = this->bitLength() / 32 + ((this->bitLength() % 32 != 0) ? 1 : 0);
+    BigInt base("1");
+    base = base.shiftBitsHigh(2 * k * 32);
+    return base / (*this);
+}
+
+BigInt BigInt::barrettReduction(const BigInt& n, const BigInt& mu) const
+{
+    int k = n.bitLength() / 32 + ((n.bitLength() % 32 != 0) ? 1 : 0);
+    
+    BigInt q = this->shiftBitsLow((k - 1) * 32);
+    q = q * mu;
+    q = q.shiftBitsLow((k + 1) * 32);
+    
+    BigInt r1 = *this;
+    BigInt r2 = q * n;
+    BigInt r = r1 - r2;
+    
+    while (r >= n)
+    {
+        r = r - n;
+    }
+    
+    return r;
+}
+
+BigInt BigInt::mulMod(const BigInt& other, const BigInt& n, const BigInt& mu) const
+{
+    BigInt product = *this * other;
+    return product.barrettReduction(n, mu);
+}
+
+BigInt BigInt::squareMod(const BigInt& n, const BigInt& mu) const
+{
+    BigInt sq = this->square();
+    return sq.barrettReduction(n, mu);
+}
