@@ -495,3 +495,92 @@ BigInt BigInt::powerMod(const BigInt& exp, const BigInt& n, const BigInt& mu) co
     
     return result;
 }
+
+bool BigInt::isProbablePrime(int k) const
+{
+    BigInt zero("0");
+    BigInt one("1");
+    BigInt two("2");
+    BigInt three("3");
+
+    if (*this == two || *this == three)
+    {
+        return true;
+    }
+    if (*this == zero || *this == one || *this % two == zero)
+    {
+        return false;
+    }
+
+    BigInt d = *this - one;
+    BigInt nMinusOne = d;
+    int s = 0;
+
+    while (d % two == zero)
+    {
+        d = d / two;
+        s = s + 1;
+    }
+
+    BigInt mu = this->getBarrettMu();
+    int currentBase = 2;
+
+    for (int i = 0; i < k; ++i)
+    {
+        BigInt a(currentBase);
+        if (a >= *this)
+        {
+            break;
+        }
+
+        BigInt x = a.powerMod(d, *this, mu);
+        bool isProbablePrimeBase = false;
+
+        if (x == one || x == nMinusOne)
+        {
+            isProbablePrimeBase = true;
+        }
+        else
+        {
+            for (int j = 1; j < s; ++j)
+            {
+                x = x.squareMod(*this, mu);
+                if (x == one)
+                {
+                    return false;
+                }
+                if (x == nMinusOne)
+                {
+                    isProbablePrimeBase = true;
+                    break;
+                }
+            }
+        }
+
+        if (!isProbablePrimeBase)
+        {
+            return false;
+        }
+
+        bool foundNext = false;
+        while (!foundNext)
+        {
+            currentBase = currentBase + 1;
+            bool isPrime = true;
+            for (int j = 2; j * j <= currentBase; ++j)
+            {
+                if (currentBase % j == 0)
+                {
+                    isPrime = false;
+                    break;
+                }
+            }
+            if (isPrime)
+            {
+                foundNext = true;
+            }
+        }
+    }
+
+    return true;
+}

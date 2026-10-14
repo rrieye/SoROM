@@ -165,6 +165,29 @@ bool testIdentity3()
     return false;
 }
 
+bool testMillerRabin()
+{
+    BigInt p1("7FFFFFFF"); 
+    BigInt c1("7FFFFFFE"); 
+    BigInt p2("3E5"); 
+    BigInt c2("3E7"); 
+    BigInt p3("7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF"); 
+    
+    bool res1 = p1.isProbablePrime(10);
+    bool res2 = c1.isProbablePrime(10);
+    bool res3 = p2.isProbablePrime(10);
+    bool res4 = c2.isProbablePrime(10);
+    bool res5 = p3.isProbablePrime(20);
+
+    if (res1 && !res2 && res3 && !res4 && res5)
+    {
+        cout << "\n   [PASS] Miller-Rabin Primality Test\n";
+        return true;
+    }
+    cout << "   [FAIL] Miller-Rabin Primality Test\n";
+    return false;
+}
+
 void runTests()
 {
     cout << "--- Running Tests ---\n";
@@ -203,6 +226,10 @@ void runTests()
         allPassed = false;
     }
     if (!testIdentity3())
+    {
+        allPassed = false;
+    }
+    if (!testMillerRabin())
     {
         allPassed = false;
     }

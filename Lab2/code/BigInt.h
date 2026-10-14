@@ -58,4 +58,7 @@ public:
     BigInt squareMod(const BigInt& n, const BigInt& mu) const;
 
     BigInt powerMod(const BigInt& exp, const BigInt& n, const BigInt& mu) const;
+
+    // додатково для теста Міллера-Рабіна
+    bool isProbablePrime(int k) const;
 };
