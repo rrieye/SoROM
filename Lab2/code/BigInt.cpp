@@ -477,3 +477,21 @@ BigInt BigInt::squareMod(const BigInt& n, const BigInt& mu) const
     BigInt sq = this->square();
     return sq.barrettReduction(n, mu);
 }
+
+BigInt BigInt::powerMod(const BigInt& exp, const BigInt& n, const BigInt& mu) const
+{
+    BigInt result("1");
+    BigInt base = this->barrettReduction(n, mu);
+    std::string expBin = exp.toBinary();
+    
+    for (char bit : expBin)
+    {
+        result = result.squareMod(n, mu);
+        if (bit == '1')
+        {
+            result = result.mulMod(base, n, mu);
+        }
+    }
+    
+    return result;
+}

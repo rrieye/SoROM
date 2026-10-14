@@ -10,59 +10,22 @@ int main()
     runTests();
     runBenchmarks();
 
-    BigInt a("AABBCCDD11223344");
-    BigInt b("1111111111111111");
-    BigInt c("100");
+    BigInt a("ada300c1d4c601c7e603aed263464ccad55b7e7ad795986e8e32e13b0a7d2c619af3f83e278ff80f98ce8fa3f0f0088ca49b53b6563f3f74969ce2906118bfba6162255e750dc922613cb7e31d959074be02a4411f15093f383fb2e61b7229512c5d5651054700b0e3d93b6e514b71115e9ec8ce584ed8da15587c5560eb99d6");
+    BigInt b("2ce123c0661d00fd74343d807bc252f16c50ab0764be6797c1be67d82384903294620aafdd926b0c3c762313a12bc5e00f83179c9958d2c9b79f3597b3ca9c3f6dc97ac6d927ad440745326531a0680193e82b5cae5ac09deaff2ae5c62e392480755d124387b477e2a2d4b3cd872fd7acff13a05d4acc720a2b857dfe58bebd");
+    BigInt c("a7b5037fb553ead1e7c2f200af68bc80c0abd5fc4d2e4a6db0aa8aa16a27d06f2fc7b6182fdcc3ea38b78031d2ac14a306f6c1f2c787745fa90d3e325ec06b8e");
     BigInt d("200");
     BigInt testNum("F");
+
 
     cout << "A = " << a << "\n";
     cout << "B = " << b << "\n";
     cout << "A + B = " << (a + b) << "\n";
     cout << "A - B = " << (a - b) << "\n\n";
+    cout << "A * B = " << (a * b) << "\n\n";
+    cout << "A / C = " << (a / c) << "\n\n";
+    cout << "A / C = " << (a % c) << "\n\n";
 
-    cout << "c < d:  " << (c < d) << " (expected 1)\n";
-    cout << "d == d: " << (d == d) << " (expected 1)\n";
-    cout << "c >= d: " << (c >= d) << " (expected 0)\n\n";
 
-    cout << "testNum = " << testNum << "\n";
-    cout << "bitLength: " << testNum.bitLength() << " (expected 4)\n";
-
-    BigInt shiftedHigh = testNum.shiftBitsHigh(4);
-    cout << "testNum << 4: " << shiftedHigh << " (expected f0)\n";
-
-    BigInt shiftedLow = shiftedHigh.shiftBitsLow(4);
-    cout << "shiftedHigh >> 4: " << shiftedLow << " (expected f)\n";
-
-    BigInt mul1("100000000");
-    BigInt mul2("200000000");
-    cout << "\n100000000 * 200000000 = " << (mul1 * mul2) << " (expected 20000000000000000)\n";
-    
-    BigInt mul3("FFFFFFFF");
-    BigInt mul4("FFFFFFFF");
-    cout << "FFFFFFFF * FFFFFFFF = " << (mul3 * mul4) << " (expected fffffffe00000001)\n";
-
-    BigInt div1("100000000"); 
-    BigInt div2("3");
-    
-    cout << "\n100000000 / 3 = " << (div1 / div2) << " (expected 55555555)\n";
-    cout << "100000000 % 3 = " << (div1 % div2) << " (expected 1)\n";
-    
-    BigInt div3("AABBCCDD11223344");
-    BigInt div4("1111111111111111");
-    cout << "A / B = " << (div3 / div4) << " (expected a)\n";
-    cout << "A % B = " << (div3 % div4) << " (expected 1122326677889a)\n";
-
-    BigInt base("5");
-    BigInt exponent("13");
-    
-    cout << "\n5 ^ 13 = " << base.power(exponent) << " (expected 1158e460913d)\n";
-
-    BigInt formatTest("FF"); 
-    cout << "\n--- Formatting Tests ---\n";
-    cout << "Hex: " << formatTest.toHex() << "\n";
-    cout << "Binary: " << formatTest.toBinary() << " (expected 11111111)\n";
-    cout << "Decimal: " << formatTest.toDecimal() << " (expected 255)\n";
 
     return 0;
 }
