@@ -1,0 +1,9 @@
+Operation,Time_ns
+gcd,7066484
+lcm,7128564
+addMod,99
+subMod,71
+mulMod,1367
+squareMod,1434
+powerMod,26790
+MillerRabin,3789454
