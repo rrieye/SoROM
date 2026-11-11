@@ -319,7 +319,7 @@ FieldElement251 FieldElement251::invert() const
         res *= base;
     }
 
-    return res.square();
+    return res;
 }
 
 uint8_t FieldElement251::trace() const
