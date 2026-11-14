@@ -8,7 +8,7 @@
 class BigInt
 {
 public:
-    static constexpr size_t WORDS = 64;
+    static constexpr size_t WORDS = 128;
 
     std::array<uint32_t, WORDS> words{};
 
